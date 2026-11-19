@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f5f2" />
+    <title>Мастерская — управление магазином</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#overview" aria-label="На главную">
+          <span class="brand-mark">м</span>
+          <span class="brand-name">мастерская<span class="brand-dot">.</span></span>
+        </a>
+
+        <div class="shop-switcher">
+          <div class="shop-avatar">Л</div>
+          <div class="shop-switcher-copy"><strong id="sidebar-shop-name">Лист и Лён</strong><span>Мой магазин</span></div>
+          <span class="switcher-chevron">⌄</span>
+        </div>
+
+        <div class="nav-label">РАБОЧЕЕ МЕСТО</div>
+        <nav class="main-nav" aria-label="Основная навигация">
+          <button class="nav-item active" data-page="overview"><span class="nav-icon">◫</span>Обзор</button>
+          <button class="nav-item" data-page="products"><span class="nav-icon">▦</span>Товары<span class="nav-count" id="product-count">5</span></button>
+          <button class="nav-item" data-page="orders"><span class="nav-icon">▤</span>Заказы<span class="nav-count warm" id="new-orders-count">3</span></button>
+          <button class="nav-item" data-page="assistant"><span class="nav-icon sparkle">✳</span>ИИ-помощник<span class="nav-new">NEW</span></button>
+        </nav>
+
+        <div class="nav-label second-label">МАГАЗИН</div>
+        <nav class="main-nav" aria-label="Настройки магазина">
+          <button class="nav-item" data-page="store"><span class="nav-icon">↗</span>Витрина магазина</button>
+          <button class="nav-item" data-page="settings"><span class="nav-icon">⚙</span>Настройки</button>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="help-card"><div class="help-sparkle">✳</div><strong>Магазин начинается с идеи</strong><p>Помощник подскажет, что делать дальше.</p><button data-page="assistant">Спросить помощника <span>↗</span></button></div>
+          <div class="user-profile"><div class="user-avatar">Б</div><div class="user-copy"><strong>Богдан Алфеев</strong><span>Владелец магазина</span></div><button class="more-button" aria-label="Дополнительно">···</button></div>
+        </div>
+      </aside>
+
+      <main class="main-area">
+        <header class="topbar">
+          <div class="breadcrumbs"><span>Магазины</span><i>/</i><strong id="breadcrumb-current">Обзор</strong></div>
+          <div class="top-actions"><span class="status-pill"><span></span>Магазин опубликован</span><button class="icon-button" aria-label="Уведомления">♧<b></b></button><div class="top-avatar">Б</div></div>
+        </header>
+        <div class="page-content" id="page-content"></div>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="modal-backdrop" hidden>
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-head"><div><div class="eyebrow">КАТАЛОГ</div><h2 id="modal-title">Новый товар</h2></div><button class="modal-close" id="modal-close" aria-label="Закрыть">×</button></div>
+        <form id="product-form">
+          <input type="hidden" name="id" />
+          <label>Название товара<input name="name" required placeholder="Например, ваза «Тихое утро»" /></label>
+          <div class="form-row"><label>Цена, ₽<input name="price" type="number" required min="1" placeholder="3 900" /></label><label>Остаток, шт.<input name="stock" type="number" min="0" value="10" /></label></div>
+          <label>Категория<input name="category" placeholder="Керамика" /></label>
+          <label>Описание<textarea name="description" rows="3" placeholder="Расскажите, чем товар особенный"></textarea></label>
+          <div class="modal-actions"><button type="button" class="button button-quiet" id="cancel-product">Отмена</button><button class="button button-primary" type="submit">Сохранить товар <span>↗</span></button></div>
+        </form>
+      </section>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
