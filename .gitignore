@@ -1,16 +1,4 @@
-# Dependencies and build output
-node_modules/
-dist/
-build/
-coverage/
-
-# Local configuration and secrets
-.env
-.env.*
-!.env.example
-
-# Editor and operating system files
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
+__pycache__/
+data/*.sqlite3
+data/*.sqlite3-shm
+data/*.sqlite3-wal
