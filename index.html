@@ -8,7 +8,31 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="app-shell">
+    <main class="auth-screen" id="auth-screen" aria-live="polite">
+      <section class="auth-card">
+        <a class="brand auth-brand" href="#overview" aria-label="Мастерская">
+          <span class="brand-mark">м</span>
+          <span class="brand-name">мастерская<span class="brand-dot">.</span></span>
+        </a>
+        <div id="auth-loading" class="auth-loading">Подключаемся к рабочему пространству…</div>
+        <div id="auth-content" hidden>
+          <div class="eyebrow">ВАШЕ РАБОЧЕЕ ПРОСТРАНСТВО</div>
+          <h1 id="auth-title">Войти в аккаунт</h1>
+          <p class="auth-intro" id="auth-intro">Войдите, чтобы продолжить работу с магазинами.</p>
+          <form id="auth-form" class="auth-form">
+            <label id="auth-name-row" hidden>Ваше имя<input name="displayName" autocomplete="name" minlength="2" maxlength="80" placeholder="Например, Богдан Алфеев" /></label>
+            <label>Электронная почта<input name="email" type="email" autocomplete="email" required maxlength="254" placeholder="name@example.ru" /></label>
+            <label>Пароль<input name="password" type="password" autocomplete="current-password" required minlength="8" maxlength="128" placeholder="Не менее 8 символов" /></label>
+            <label id="auth-import-row" class="auth-import" hidden><input name="importLocal" type="checkbox" checked /><span>Перенести магазины и демонстрационные данные из этого браузера</span></label>
+            <p id="auth-error" class="auth-error" hidden></p>
+            <button id="auth-submit" class="button button-primary auth-submit" type="submit">Войти</button>
+          </form>
+          <button id="auth-switch" class="auth-switch" type="button" data-auth-mode="register">Нет аккаунта? Зарегистрироваться</button>
+          <p class="auth-footnote">Для локальной демонстрации данные хранятся в SQLite на этом компьютере.</p>
+        </div>
+      </section>
+    </main>
+    <div class="app-shell" id="app-shell" hidden>
       <aside class="sidebar">
         <a class="brand" href="#overview" aria-label="На главную">
           <span class="brand-mark">м</span>
@@ -43,7 +67,7 @@
 
         <div class="sidebar-bottom">
           <div class="help-card"><div class="help-sparkle">✳</div><strong>Соберите сайт под себя</strong><p>Выберите шаблон и настройте главную страницу.</p><button data-page="builder">Открыть конструктор <span>↗</span></button></div>
-          <div class="user-profile"><div class="user-avatar">Б</div><div class="user-copy"><strong>Богдан Алфеев</strong><span>Владелец магазина</span></div><button class="more-button" aria-label="Дополнительно">···</button></div>
+          <div class="user-profile"><div class="user-avatar" id="user-avatar">Б</div><div class="user-copy"><strong id="user-display-name">Владелец</strong><span>Владелец магазина</span></div><button class="more-button" id="logout-button" aria-label="Выйти из аккаунта" title="Выйти">↪</button></div>
         </div>
       </aside>
 

@@ -203,3 +203,24 @@
 @media(max-width:780px){.shop-menu{left:70px;top:90px;width:235px}.builder-layout{grid-template-columns:1fr}.builder-editor{position:static}.builder-editor-body{max-height:none}.preview-canvas{max-height:none}.builder-preview-column{order:-1}.preview-canvas{min-height:430px}.storefront-hero{min-height:270px}.storefront-art{height:200px}}
 @media(max-width:520px){.shop-wizard{padding:19px}.wizard-templates{gap:7px}.wizard-template{padding:6px}.wizard-template.selected{padding:5px}.wizard-template-scene{height:75px}.wizard-template small{font-size:8px}.builder-preview-column{margin-inline:-5px}.preview-canvas{padding:9px;min-height:350px}.storefront-nav{height:48px;padding:0 4%}.storefront-nav>strong{font-size:13px}.storefront-nav>div{gap:8px}.storefront-nav a,.storefront-nav>button{font-size:8px}.storefront-hero{min-height:230px;padding:24px 6% 33px}.storefront-copy h2{font-size:27px}.storefront-copy p{font-size:9px}.storefront-art{height:155px}.storefront-art:before{width:145px;height:145px}.storefront-art>span{font-size:64px}.storefront-art i{width:140px}.storefront-benefits{gap:4%;font-size:7px}.storefront-products{padding:25px 6%}.storefront-product-art{height:85px;font-size:29px}.storefront-story{padding:25px 8%}.storefront-story p{font-size:15px}}
 
+
+/* Экран входа и регистрации для работы с серверным хранилищем. */
+[hidden]{display:none!important}
+.auth-screen{min-height:100vh;padding:28px 18px;display:grid;place-items:center;background:radial-gradient(ellipse at 18% 16%,#edf1e8 0,transparent 34%),#f6f5f2}
+.auth-card{width:min(100%,440px);padding:38px 42px;background:#fff;border:1px solid #eeede8;border-radius:18px;box-shadow:0 24px 80px rgba(43,48,39,.08)}
+.auth-brand{padding:0 0 31px}
+.auth-card h1{font:600 28px/1.2 Manrope,Arial,sans-serif;letter-spacing:-.8px;margin:9px 0 8px}
+.auth-intro,.auth-loading{font-size:13px;line-height:1.6;color:var(--muted);margin:0 0 22px}
+.auth-loading{margin:0;text-align:center}
+.auth-form{display:grid;gap:14px}
+.auth-form>label:not(.auth-import){display:grid;gap:7px;font-size:12px;font-weight:600;color:#4c5048}
+.auth-form input:not([type=checkbox]){height:43px;width:100%;padding:0 12px;border:1px solid #e3e4dc;border-radius:8px;outline:0;background:#fff;color:var(--ink);font-size:13px}
+.auth-form input:focus{border-color:#8b9f8c;box-shadow:0 0 0 3px rgba(101,128,106,.12)}
+.auth-import{display:flex;align-items:flex-start;gap:9px;color:#62665d;font-size:11px;line-height:1.5;cursor:pointer}
+.auth-import input{margin:2px 0 0;accent-color:var(--green)}
+.auth-submit{width:100%;height:44px;justify-content:center;margin-top:2px}
+.auth-switch{display:block;margin:17px auto 0;border:0;background:none;color:var(--green);font-size:12px;font-weight:600;cursor:pointer}
+.auth-footnote{margin:24px 0 0;padding-top:15px;border-top:1px solid #f0f0eb;color:#96988f;font-size:10px;line-height:1.6;text-align:center}
+.auth-error{margin:0;color:#9f493b;background:#fbefec;border-radius:7px;padding:10px 12px;font-size:12px;line-height:1.45}
+.auth-card .eyebrow{font-size:9px}
+@media(max-width:520px){.auth-card{padding:29px 23px;border-radius:13px}.auth-card h1{font-size:25px}}
