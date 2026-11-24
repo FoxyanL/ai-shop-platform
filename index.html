@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f6f5f2" />
-    <title>Мастерская — управление магазином</title>
+    <title>Мастерская — конструктор интернет-магазинов</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -15,15 +15,21 @@
           <span class="brand-name">мастерская<span class="brand-dot">.</span></span>
         </a>
 
-        <div class="shop-switcher">
+        <button class="shop-switcher" id="shop-switcher" aria-expanded="false" aria-controls="shop-menu">
           <div class="shop-avatar">Л</div>
           <div class="shop-switcher-copy"><strong id="sidebar-shop-name">Лист и Лён</strong><span>Мой магазин</span></div>
           <span class="switcher-chevron">⌄</span>
+        </button>
+        <div class="shop-menu" id="shop-menu" hidden>
+          <div class="shop-menu-label">МОИ МАГАЗИНЫ</div>
+          <div id="shop-menu-list"></div>
+          <button class="shop-menu-create" data-action="create-shop">＋ Создать магазин</button>
         </div>
 
         <div class="nav-label">РАБОЧЕЕ МЕСТО</div>
         <nav class="main-nav" aria-label="Основная навигация">
           <button class="nav-item active" data-page="overview"><span class="nav-icon">◫</span>Обзор</button>
+          <button class="nav-item" data-page="builder"><span class="nav-icon">▧</span>Конструктор</button>
           <button class="nav-item" data-page="products"><span class="nav-icon">▦</span>Товары<span class="nav-count" id="product-count">5</span></button>
           <button class="nav-item" data-page="orders"><span class="nav-icon">▤</span>Заказы<span class="nav-count warm" id="new-orders-count">3</span></button>
           <button class="nav-item" data-page="assistant"><span class="nav-icon sparkle">✳</span>ИИ-помощник<span class="nav-new">NEW</span></button>
@@ -36,7 +42,7 @@
         </nav>
 
         <div class="sidebar-bottom">
-          <div class="help-card"><div class="help-sparkle">✳</div><strong>Магазин начинается с идеи</strong><p>Помощник подскажет, что делать дальше.</p><button data-page="assistant">Спросить помощника <span>↗</span></button></div>
+          <div class="help-card"><div class="help-sparkle">✳</div><strong>Соберите сайт под себя</strong><p>Выберите шаблон и настройте главную страницу.</p><button data-page="builder">Открыть конструктор <span>↗</span></button></div>
           <div class="user-profile"><div class="user-avatar">Б</div><div class="user-copy"><strong>Богдан Алфеев</strong><span>Владелец магазина</span></div><button class="more-button" aria-label="Дополнительно">···</button></div>
         </div>
       </aside>
@@ -61,6 +67,15 @@
           <label>Описание<textarea name="description" rows="3" placeholder="Расскажите, чем товар особенный"></textarea></label>
           <div class="modal-actions"><button type="button" class="button button-quiet" id="cancel-product">Отмена</button><button class="button button-primary" type="submit">Сохранить товар <span>↗</span></button></div>
         </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="shop-wizard-backdrop" hidden>
+      <section class="modal shop-wizard" role="dialog" aria-modal="true" aria-labelledby="wizard-title">
+        <div class="modal-head"><div><div class="eyebrow">НОВЫЙ МАГАЗИН · ШАГ <span id="wizard-step-number">1</span> ИЗ 2</div><h2 id="wizard-title">Расскажите о магазине</h2></div><button class="modal-close" id="wizard-close" aria-label="Закрыть">×</button></div>
+        <div class="wizard-progress"><span id="wizard-progress-bar"></span></div>
+        <div id="wizard-body"></div>
+        <div class="wizard-actions"><button class="button button-quiet" id="wizard-back" hidden>Назад</button><button class="button button-primary" id="wizard-next">Дальше <span>↗</span></button></div>
       </section>
     </div>
     <div class="toast" id="toast" role="status"></div>
