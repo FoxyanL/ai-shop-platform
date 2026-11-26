@@ -1,0 +1,430 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "API платформы Мастерская",
+    "version": "0.1.0",
+    "description": "API конструктора интернет-магазинов. Даты передаются в ISO 8601. Все административные маршруты требуют Bearer-токен."
+  },
+  "servers": [{ "url": "http://localhost:4000/api/v1" }],
+  "tags": [
+    { "name": "Авторизация" },
+    { "name": "Магазины" },
+    { "name": "Каталог" },
+    { "name": "Покупатель" },
+    { "name": "Справочники" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    },
+    "schemas": {
+      "Page": {
+        "type": "object",
+        "required": ["totalCount", "nextPage", "prevPage", "items"],
+        "properties": {
+          "totalCount": { "type": "integer" },
+          "nextPage": { "type": ["string", "null"] },
+          "prevPage": { "type": ["string", "null"] },
+          "items": { "type": "array", "items": {} }
+        }
+      },
+      "GoodCategory": {
+        "type": "object",
+        "required": ["id", "title", "description", "parentId"],
+        "properties": {
+          "id": { "type": ["integer", "string"] },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "parentId": { "type": ["integer", "string", "null"] },
+          "shopId": { "type": ["string", "null"], "format": "uuid" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Good": {
+        "type": "object",
+        "required": ["id", "name", "description", "price", "categoryId"],
+        "properties": {
+          "id": { "type": ["integer", "string"] },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "price": { "type": "number" },
+          "categoryId": { "type": ["integer", "string", "null"] },
+          "shopId": { "type": ["string", "null"], "format": "uuid" },
+          "brandId": { "type": ["integer", "string", "null"] },
+          "sizeIds": { "type": "array", "items": { "type": "integer" } },
+          "stockCount": { "type": "integer" },
+          "published": { "type": "boolean" }
+        }
+      },
+      "Error": { "type": "object", "properties": { "error": { "type": "string" } } }
+    },
+    "pathItems": {
+      "resource": {
+        "get": {
+          "tags": ["Справочники"],
+          "security": [{ "bearerAuth": [] }],
+          "summary": "Получить страницу записей",
+          "parameters": [
+            {
+              "name": "limit",
+              "in": "query",
+              "schema": { "type": "integer", "minimum": 1, "maximum": 100 }
+            },
+            { "name": "offset", "in": "query", "schema": { "type": "integer", "minimum": 0 } }
+          ],
+          "responses": {
+            "200": {
+              "description": "Страница с totalCount, nextPage, prevPage и items",
+              "content": {
+                "application/json": { "schema": { "$ref": "#/components/schemas/Page" } }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["Справочники"],
+          "security": [{ "bearerAuth": [] }],
+          "summary": "Создать запись",
+          "requestBody": {
+            "required": true,
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          },
+          "responses": {
+            "201": { "description": "Запись создана" },
+            "400": { "description": "Некорректные поля" }
+          }
+        }
+      },
+      "resourceById": {
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": ["integer", "string"] }
+          }
+        ],
+        "get": {
+          "tags": ["Справочники"],
+          "security": [{ "bearerAuth": [] }],
+          "summary": "Получить запись по идентификатору",
+          "responses": {
+            "200": { "description": "Запись найдена" },
+            "404": { "description": "Запись не найдена" }
+          }
+        },
+        "patch": {
+          "tags": ["Справочники"],
+          "security": [{ "bearerAuth": [] }],
+          "summary": "Изменить запись",
+          "requestBody": {
+            "required": true,
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          },
+          "responses": { "200": { "description": "Запись изменена" } }
+        },
+        "delete": {
+          "tags": ["Справочники"],
+          "security": [{ "bearerAuth": [] }],
+          "summary": "Удалить запись",
+          "responses": { "204": { "description": "Запись удалена" } }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["Авторизация"],
+        "summary": "Создать учётную запись и отправить код подтверждения",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "firstName", "lastName"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "firstName": { "type": "string" },
+                  "lastName": { "type": "string" },
+                  "role": { "type": "string", "enum": ["shop_owner", "customer"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": { "description": "Код отправлен" },
+          "400": {
+            "description": "Некорректные данные",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Авторизация"],
+        "summary": "Отправить одноразовый код на почту",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": { "email": { "type": "string", "format": "email" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": { "description": "Код отправлен" },
+          "400": { "description": "Некорректный адрес" }
+        }
+      }
+    },
+    "/auth/confirm": {
+      "post": {
+        "tags": ["Авторизация"],
+        "summary": "Подтвердить одноразовый код",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "otp"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "otp": { "type": "string", "pattern": "^[0-9]{6}$" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Токен доступа и HttpOnly refresh-cookie" },
+          "400": { "description": "Код неверен или истёк" }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": ["Авторизация"],
+        "summary": "Обновить токен доступа по HttpOnly-cookie",
+        "responses": {
+          "200": { "description": "Новый токен доступа" },
+          "401": { "description": "Сессия завершена" }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Авторизация"],
+        "summary": "Завершить сессию",
+        "responses": { "204": { "description": "Сессия закрыта" } }
+      }
+    },
+    "/shops": {
+      "get": {
+        "tags": ["Магазины"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Список доступных магазинов",
+        "responses": { "200": { "description": "Магазины текущего пользователя" } }
+      },
+      "post": {
+        "tags": ["Магазины"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Создать магазин и рабочее пространство",
+        "responses": { "201": { "description": "Магазин создан" } }
+      }
+    },
+    "/shops/{id}": {
+      "patch": {
+        "tags": ["Магазины"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Изменить настройки магазина",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "type": "object" } }
+          }
+        },
+        "responses": {
+          "200": { "description": "Настройки магазина обновлены" },
+          "404": { "description": "Магазин не найден или нет доступа" }
+        }
+      }
+    },
+    "/shops/{id}/orders": {
+      "get": {
+        "tags": ["Магазины"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Список заказов магазина",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": { "200": { "description": "Заказы и статусы оплат" } }
+      }
+    },
+    "/shops/{id}/publish": {
+      "post": {
+        "tags": ["Магазины"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Опубликовать магазин",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": { "200": { "description": "Магазин опубликован" } }
+      }
+    },
+    "/public/shops/{slug}": {
+      "get": {
+        "tags": ["Магазины"],
+        "summary": "Опубликованная витрина с товарами",
+        "parameters": [
+          { "name": "slug", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Витрина и опубликованный каталог" },
+          "404": { "description": "Магазин не найден" }
+        }
+      }
+    },
+    "/news": { "$ref": "#/components/pathItems/resource" },
+    "/users": { "$ref": "#/components/pathItems/resource" },
+    "/brands": { "$ref": "#/components/pathItems/resource" },
+    "/sizes": { "$ref": "#/components/pathItems/resource" },
+    "/good-categories": { "$ref": "#/components/pathItems/resource" },
+    "/goods": { "$ref": "#/components/pathItems/resource" },
+    "/payment-methods": { "$ref": "#/components/pathItems/resource" },
+    "/delivery-methods": { "$ref": "#/components/pathItems/resource" },
+    "/recipients": { "$ref": "#/components/pathItems/resource" },
+    "/news/{id}": { "$ref": "#/components/pathItems/resourceById" },
+    "/users/{id}": { "$ref": "#/components/pathItems/resourceById" },
+    "/brands/{id}": { "$ref": "#/components/pathItems/resourceById" },
+    "/sizes/{id}": { "$ref": "#/components/pathItems/resourceById" },
+    "/good-categories/{id}": { "$ref": "#/components/pathItems/resourceById" },
+    "/goods/{id}": { "$ref": "#/components/pathItems/resourceById" },
+    "/payment-methods/{id}": { "$ref": "#/components/pathItems/resourceById" },
+    "/delivery-methods/{id}": { "$ref": "#/components/pathItems/resourceById" },
+    "/recipients/{id}": { "$ref": "#/components/pathItems/resourceById" },
+    "/me/basket-items": {
+      "get": {
+        "tags": ["Покупатель"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Просмотреть корзину",
+        "responses": { "200": { "description": "Состав корзины" } }
+      },
+      "post": {
+        "tags": ["Покупатель"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Добавить товар в корзину",
+        "responses": { "201": { "description": "Позиция корзины добавлена" } }
+      }
+    },
+    "/me/basket-items/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer", "minimum": 1 }
+        }
+      ],
+      "patch": {
+        "tags": ["Покупатель"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Изменить количество товара",
+        "responses": { "200": { "description": "Количество изменено" } }
+      },
+      "delete": {
+        "tags": ["Покупатель"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Удалить товар из корзины",
+        "responses": { "204": { "description": "Позиция удалена" } }
+      }
+    },
+    "/me/recipients": {
+      "get": {
+        "tags": ["Покупатель"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Список своих получателей",
+        "responses": { "200": { "description": "Получатели пользователя" } }
+      },
+      "post": {
+        "tags": ["Покупатель"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Создать получателя",
+        "responses": { "201": { "description": "Получатель создан" } }
+      }
+    },
+    "/me/recipients/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer", "minimum": 1 }
+        }
+      ],
+      "get": {
+        "tags": ["Покупатель"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Получить своего получателя",
+        "responses": { "200": { "description": "Получатель найден" } }
+      },
+      "delete": {
+        "tags": ["Покупатель"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Удалить своего получателя",
+        "responses": { "204": { "description": "Получатель удалён" } }
+      }
+    },
+    "/me/checkouts": {
+      "get": {
+        "tags": ["Покупатель"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Список своих заказов",
+        "responses": { "200": { "description": "Заказы пользователя" } }
+      },
+      "post": {
+        "tags": ["Покупатель"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Создать заказ из корзины и транзакцию",
+        "responses": { "201": { "description": "Заказ создан" } }
+      }
+    },
+    "/me/transactions": {
+      "get": {
+        "tags": ["Покупатель"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Список своих платёжных транзакций",
+        "responses": { "200": { "description": "Транзакции пользователя" } }
+      }
+    }
+  }
+}

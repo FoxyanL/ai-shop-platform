@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: shop-platform
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shop-platform-config
+  namespace: shop-platform
+data:
+  NODE_ENV: production
+  PORT: '4000'
+  ADMIN_ORIGIN: https://admin.example.test
+  STOREFRONT_ORIGIN: https://shop.example.test
+  API_INTERNAL_URL: http://api:4000/api/v1
+  ADMIN_URL: https://admin.example.test
+  EMAIL_DEBUG_CODE: 'false'
+---
+# Перед развёртыванием задайте реальные значения через защищённое хранилище секретов.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: shop-platform-secrets
+  namespace: shop-platform
+type: Opaque
+stringData:
+  POSTGRES_USER: shop_platform
+  POSTGRES_PASSWORD: CHANGE_ME
+  POSTGRES_DB: shop_platform
+  DATABASE_URL: postgres://shop_platform:CHANGE_ME@postgres:5432/shop_platform
+  REDIS_URL: redis://redis:6379
+  JWT_ACCESS_SECRET: CHANGE_ME_USE_AT_LEAST_32_RANDOM_CHARACTERS
+  BOOTSTRAP_ADMIN_EMAIL: admin@example.test
+  SMTP_HOST: ''
+  SMTP_PORT: '587'
+  SMTP_USER: ''
+  SMTP_PASSWORD: ''
+  SMTP_FROM: Мастерская <no-reply@example.test>

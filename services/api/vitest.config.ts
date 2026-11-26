@@ -1,0 +1,19 @@
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    environment: 'node',
+    include: ['tests/**/*.test.ts'],
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.ts'],
+      exclude: ['src/**/*.d.ts', 'src/server.ts', 'src/db/pool.ts', 'src/db/migrate.ts'],
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 55,
+        statements: 80,
+      },
+    },
+  },
+});

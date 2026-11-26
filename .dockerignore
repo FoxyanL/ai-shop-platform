@@ -1,0 +1,15 @@
+.git
+.codex
+.agents
+node_modules
+**/node_modules
+**/.next
+**/dist
+**/coverage
+**/.env
+**/.env.*
+!**/.env.example
+data
+_tmp_tzd_review
+__pycache__
+*.log

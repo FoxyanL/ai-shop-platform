@@ -1,0 +1,85 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: shop_platform
+      POSTGRES_USER: shop_platform
+      POSTGRES_PASSWORD: shop_platform_dev
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U shop_platform -d shop_platform']
+      interval: 5s
+      timeout: 3s
+      retries: 15
+
+  redis:
+    image: redis:8-alpine
+    restart: unless-stopped
+    command: ['redis-server', '--appendonly', 'yes']
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 15
+
+  api:
+    build:
+      context: ..
+      dockerfile: services/api/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      DATABASE_URL: postgres://shop_platform:shop_platform_dev@postgres:5432/shop_platform
+      REDIS_URL: redis://redis:6379
+      JWT_ACCESS_SECRET: local-development-access-secret-change-before-deploy-0001
+      ADMIN_ORIGIN: http://localhost:5173
+      STOREFRONT_ORIGIN: http://localhost:3000
+      BOOTSTRAP_ADMIN_EMAIL: admin@example.test
+      EMAIL_DEBUG_CODE: 'true'
+    ports:
+      - '4000:4000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  admin:
+    build:
+      context: ..
+      dockerfile: apps/admin/Dockerfile
+      args:
+        VITE_API_URL: /api/v1
+        VITE_STOREFRONT_URL: http://localhost:3000
+    restart: unless-stopped
+    ports:
+      - '5173:80'
+    depends_on:
+      - api
+
+  storefront:
+    build:
+      context: ..
+      dockerfile: apps/storefront/Dockerfile
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      API_INTERNAL_URL: http://api:4000/api/v1
+      ADMIN_URL: http://localhost:5173
+    ports:
+      - '3000:3000'
+    depends_on:
+      - api
+
+volumes:
+  postgres-data:
+  redis-data:

@@ -1,0 +1,35 @@
+{
+  "name": "shop-platform",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "workspaces": [
+    "apps/admin",
+    "apps/storefront",
+    "services/api"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,admin,storefront -c blue,green,magenta \"npm:dev:api\" \"npm:dev:admin\" \"npm:dev:storefront\"",
+    "dev:api": "npm run dev --workspace @shop-platform/api",
+    "dev:admin": "npm run dev --workspace @shop-platform/admin",
+    "dev:storefront": "npm run dev --workspace @shop-platform/storefront",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "eslint \"apps/**/*.{ts,tsx}\" \"services/api/{src,tests}/**/*.ts\" && npm run lint --workspaces --if-present",
+    "test": "npm run test --workspace @shop-platform/api",
+    "test:coverage": "npm run test:coverage --workspace @shop-platform/api",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,yml,yaml,md,css}\""
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.14.0",
+    "prettier": "^3.10.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.74.0"
+  }
+}
