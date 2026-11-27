@@ -4,12 +4,11 @@ COPY package.json package-lock.json ./
 COPY apps/admin/package.json apps/admin/package.json
 COPY apps/storefront/package.json apps/storefront/package.json
 COPY services/api/package.json services/api/package.json
-RUN npm ci --workspace @shop-platform/admin --include-workspace-root=false
+RUN npm install --package-lock=false --workspace @shop-platform/admin --include-workspace-root=false --include=optional
 
 FROM node:24-alpine AS build
 WORKDIR /repo
 COPY --from=dependencies /repo/node_modules ./node_modules
-COPY --from=dependencies /repo/apps/admin/node_modules ./apps/admin/node_modules
 COPY package.json package-lock.json ./
 COPY apps/admin ./apps/admin
 ARG VITE_API_URL=/api/v1
